@@ -1,0 +1,5 @@
+/bin
+/ClientApp/node_modules
+/.idea
+/obj
+/wwwroot
