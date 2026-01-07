@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import axios from 'axios';
 import { Room } from '../types';
 
 interface RoomsState {
@@ -15,106 +16,40 @@ const initialState: RoomsState = {
   error: null,
 };
 
-// Async thunk for fetching all rooms
-export const fetchRooms = createAsyncThunk(
-  'rooms/fetchRooms',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await fetch('/api/rooms');
-      if (!response.ok) {
-        const errorData = await response.json();
-        return rejectWithValue(errorData.message || 'Failed to fetch rooms');
-      }
-      const roomsData = await response.json();
-      return roomsData;
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Network error');
-    }
-  }
-);
+export const fetchRooms = createAsyncThunk('rooms/fetchRooms', async () => {
+  const response = await axios.get('/api/rooms');
+  return response.data;
+});
 
-// Async thunk for fetching a single room
 export const fetchRoom = createAsyncThunk(
- 'rooms/fetchRoom',
-  async (id: number, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`/api/rooms/${id}`);
-      if (!response.ok) {
-        const errorData = await response.json();
-        return rejectWithValue(errorData.message || 'Failed to fetch room');
-      }
-      const roomData = await response.json();
-      return roomData;
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Network error');
-    }
+  'rooms/fetchRoom',
+  async (id: number) => {
+    const response = await axios.get(`/api/rooms/${id}`);
+    return response.data;
   }
 );
 
-// Async thunk for creating a room (admin only)
 export const createRoom = createAsyncThunk(
   'rooms/createRoom',
-  async (roomData: Omit<Room, 'id'>, { rejectWithValue }) => {
-    try {
-      const response = await fetch('/api/rooms', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(roomData),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        return rejectWithValue(errorData.message || 'Failed to create room');
-      }
-      const createdRoom = await response.json();
-      return createdRoom;
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Network error');
-    }
+  async (roomData: Omit<Room, 'id'>) => {
+    const response = await axios.post('/api/rooms', roomData);
+    return response.data;
   }
 );
 
-// Async thunk for updating a room (admin only)
 export const updateRoom = createAsyncThunk(
   'rooms/updateRoom',
-  async ({ id, roomData }: { id: number; roomData: Room }, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`/api/rooms/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(roomData),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        return rejectWithValue(errorData.message || 'Failed to update room');
-      }
-      const updatedRoom = await response.json();
-      return updatedRoom;
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Network error');
-    }
+  async ({ id, roomData }: { id: number; roomData: Room }) => {
+    const response = await axios.put(`/api/rooms/${id}`, roomData);
+    return response.data;
   }
 );
 
-// Async thunk for deleting a room (admin only)
 export const deleteRoom = createAsyncThunk(
   'rooms/deleteRoom',
-  async (id: number, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`/api/rooms/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        return rejectWithValue(errorData.message || 'Failed to delete room');
-      }
-      return id;
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Network error');
-    }
+  async (id: number) => {
+    await axios.delete(`/api/rooms/${id}`);
+    return id;
   }
 );
 
@@ -126,12 +61,12 @@ const roomsSlice = createSlice({
       state.error = null;
     },
     selectRoom: (state, action: PayloadAction<number>) => {
-      state.selectedRoom = state.rooms.find(room => room.id === action.payload) || null;
+      state.selectedRoom =
+        state.rooms.find((room) => room.id === action.payload) || null;
     },
   },
   extraReducers: (builder) => {
     builder
-      // Fetch rooms cases
       .addCase(fetchRooms.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -144,23 +79,22 @@ const roomsSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      // Fetch room cases
       .addCase(fetchRoom.fulfilled, (state, action: PayloadAction<Room>) => {
         state.selectedRoom = action.payload;
       })
       .addCase(fetchRoom.rejected, (state, action) => {
         state.error = action.payload as string;
       })
-      // Create room cases
       .addCase(createRoom.fulfilled, (state, action: PayloadAction<Room>) => {
         state.rooms.push(action.payload);
       })
       .addCase(createRoom.rejected, (state, action) => {
         state.error = action.payload as string;
       })
-      // Update room cases
       .addCase(updateRoom.fulfilled, (state, action: PayloadAction<Room>) => {
-        const index = state.rooms.findIndex(room => room.id === action.payload.id);
+        const index = state.rooms.findIndex(
+          (room) => room.id === action.payload.id
+        );
         if (index !== -1) {
           state.rooms[index] = action.payload;
         }
@@ -169,9 +103,8 @@ const roomsSlice = createSlice({
       .addCase(updateRoom.rejected, (state, action) => {
         state.error = action.payload as string;
       })
-      // Delete room cases
       .addCase(deleteRoom.fulfilled, (state, action: PayloadAction<number>) => {
-        state.rooms = state.rooms.filter(room => room.id !== action.payload);
+        state.rooms = state.rooms.filter((room) => room.id !== action.payload);
         if (state.selectedRoom && state.selectedRoom.id === action.payload) {
           state.selectedRoom = null;
         }

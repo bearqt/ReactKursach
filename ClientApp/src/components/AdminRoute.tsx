@@ -8,20 +8,20 @@ interface AdminRouteProps {
 }
 
 const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
- const { isAuthenticated, user, loading } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, user, loading } = useSelector(
+    (state: RootState) => state.auth
+  );
   const location = useLocation();
 
   if (loading) {
-    return <div>Loading...</div>; // In a real app, use a proper loading component
+    return <div>Loading...</div>;
   }
 
   if (!isAuthenticated) {
-    // Redirect to login page with return url
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
- if (user?.role !== 'Admin') {
-    // Redirect to home page if not admin
+  if (user?.role !== 'Admin') {
     return <Navigate to="/" replace />;
   }
 

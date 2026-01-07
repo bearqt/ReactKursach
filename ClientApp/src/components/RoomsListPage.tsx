@@ -1,41 +1,42 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchRooms } from '../store/roomsSlice';
-import { RootState } from '../store';
+import { RootState, AppDispatch } from '../store';
 import { Link } from 'react-router-dom';
 import {
   Container,
   Paper,
   Typography,
   Grid,
- Card,
+  Card,
   CardContent,
   CardActions,
   Button,
-  Box,
-  Alert
+  Alert,
 } from '@mui/material';
 
 const RoomsListPage: React.FC = () => {
-  const dispatch = useDispatch();
-  const { rooms, loading, error } = useSelector((state: RootState) => state.rooms);
+  const dispatch: AppDispatch = useDispatch();
+  const { rooms, loading, error } = useSelector(
+    (state: RootState) => state.rooms
+  );
 
   useEffect(() => {
-    dispatch(fetchRooms() as any);
- }, [dispatch]);
+    dispatch(fetchRooms());
+  }, [dispatch]);
 
   return (
     <Container maxWidth="lg" style={{ marginTop: '2rem' }}>
       <Typography variant="h4" gutterBottom>
         Available Meeting Rooms
       </Typography>
-      
+
       {error && (
         <Alert severity="error" style={{ marginBottom: '1rem' }}>
           {error}
         </Alert>
       )}
-      
+
       {loading ? (
         <Typography>Loading rooms...</Typography>
       ) : (

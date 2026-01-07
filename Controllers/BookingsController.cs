@@ -136,9 +136,9 @@ namespace ReactAdvancedAppQwen.Controllers
             
             // Only allow the user who created the booking to delete it, or an admin
             var currentUserId = int.Parse(User.FindFirst("Id")?.Value ?? "0");
-            var currentUserRole = User.FindFirst("Role")?.Value ?? "User";
+            var currentUserIsAdmin = User.IsInRole("Admin");
             
-            if (currentUserRole != "Admin" && existingBooking.UserId != currentUserId)
+            if (!currentUserIsAdmin && existingBooking.UserId != currentUserId)
             {
                 return Forbid();
             }

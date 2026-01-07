@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactAdvancedAppQwen", "ReactAdvancedAppQwen.csproj", "{7021BAE1-45EF-4A0B-90D0-1E1A7872A8F1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactAdvancedAppKursach", "ReactAdvancedAppKursach.csproj", "{7021BAE1-45EF-4A0B-90D0-1E1A7872A8F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

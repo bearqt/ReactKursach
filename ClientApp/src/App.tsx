@@ -1,7 +1,12 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { store } from './store';
+import { store, RootState, AppDispatch } from './store';
 import { fetchCurrentUser } from './store/authSlice';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -18,7 +23,6 @@ import AllBookingsPage from './components/AllBookingsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 
-// Create a theme
 const theme = createTheme({
   palette: {
     primary: {
@@ -34,46 +38,57 @@ const theme = createTheme({
 });
 
 const AppContent = () => {
-  const dispatch = useDispatch();
-  const { isAuthenticated, loading } = useSelector((state: any) => state.auth);
+  const dispatch: AppDispatch = useDispatch();
+  const { loading } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    // Try to fetch current user on app load to check if already authenticated
-    dispatch(fetchCurrentUser() as any);
+    dispatch(fetchCurrentUser());
   }, [dispatch]);
 
   if (loading) {
-    return <div>Loading...</div>; // In a real app, you'd use a proper loading component
+    return <div>Loading...</div>;
   }
 
- return (
+  return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-      <Route path="/profile" element={
-        <ProtectedRoute>
-          <ProfilePage />
-        </ProtectedRoute>
-      } />
-      <Route path="/my-bookings" element={
-        <ProtectedRoute>
-          <UserBookingsPage />
-        </ProtectedRoute>
-      } />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-bookings"
+        element={
+          <ProtectedRoute>
+            <UserBookingsPage />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/rooms" element={<RoomsListPage />} />
       <Route path="/rooms/:id" element={<RoomDetailPage />} />
       <Route path="/not-found" element={<NotFoundPage />} />
-      <Route path="/create-room" element={
-        <AdminRoute>
-          <CreateRoomPage />
-        </AdminRoute>
-      } />
-      <Route path="/all-bookings" element={
-        <AdminRoute>
-          <AllBookingsPage />
-        </AdminRoute>
-      } />
+      <Route
+        path="/create-room"
+        element={
+          <AdminRoute>
+            <CreateRoomPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/all-bookings"
+        element={
+          <AdminRoute>
+            <AllBookingsPage />
+          </AdminRoute>
+        }
+      />
       <Route path="/404" element={<NotFoundPage />} />
       <Route path="*" element={<Navigate to="/404" />} />
     </Routes>

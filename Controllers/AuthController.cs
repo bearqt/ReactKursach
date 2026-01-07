@@ -30,7 +30,7 @@ namespace ReactAdvancedAppQwen.Controllers
                 new System.Security.Claims.Claim("Id", user.Id.ToString()),
                 new System.Security.Claims.Claim("Login", user.Login),
                 new System.Security.Claims.Claim("Name", user.Name),
-                new System.Security.Claims.Claim("Role", user.Role)
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, user.Role)
             };
             
             var identity = new System.Security.Claims.ClaimsIdentity(claims, "cookie");
@@ -38,11 +38,11 @@ namespace ReactAdvancedAppQwen.Controllers
             
             await HttpContext.SignInAsync("Cookies", principal);
             
-            return Ok(new { 
-                user.Id, 
-                user.Login, 
-                user.Name, 
-                user.Role 
+            return Ok(new {
+                user.Id,
+                user.Login,
+                user.Name,
+                user.Role
             });
         }
         

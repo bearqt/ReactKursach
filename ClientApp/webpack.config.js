@@ -1,7 +1,11 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import { fileURLToPath } from 'url';
 
-module.exports = {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
   entry: './src/index.tsx',
   output: {
     path: path.resolve(__dirname, '../wwwroot'),
@@ -46,7 +50,7 @@ module.exports = {
     historyApiFallback: true,
     proxy: {
       '/api': {
-        target: 'https://localhost:7040', // Update with your backend URL
+        target: 'https://localhost:7040',
         secure: false,
         changeOrigin: true
       }

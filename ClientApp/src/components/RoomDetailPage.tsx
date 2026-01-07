@@ -1,41 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchRoom, selectRoom } from '../store/roomsSlice';
+import { fetchRoom } from '../store/roomsSlice';
 import { createBooking } from '../store/bookingsSlice';
-import { RootState } from '../store';
+import { RootState, AppDispatch } from '../store';
 import {
   Container,
   Paper,
   Typography,
   Button,
   Grid,
- Box,
+  Box,
   Alert,
   TextField,
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
 } from '@mui/material';
 
 const RoomDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
- const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { selectedRoom, loading, error } = useSelector((state: RootState) => state.rooms);
+  const navigate = useNavigate();
+  const dispatch: AppDispatch = useDispatch();
+  const { selectedRoom, loading, error } = useSelector(
+    (state: RootState) => state.rooms
+  );
   const { user } = useSelector((state: RootState) => state.auth);
   const [openBookingDialog, setOpenBookingDialog] = useState(false);
   const [bookingData, setBookingData] = useState({
     startDate: '',
     endDate: '',
     title: '',
-    description: ''
+    description: '',
   });
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchRoom(Number(id)) as any);
+      dispatch(fetchRoom(Number(id)));
     }
   }, [dispatch, id]);
 
@@ -49,9 +51,9 @@ const RoomDetailPage: React.FC = () => {
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!selectedRoom || !user) return;
-    
+
     const bookingToCreate = {
       roomId: selectedRoom.id,
       userId: user.id,
@@ -59,18 +61,18 @@ const RoomDetailPage: React.FC = () => {
       endDate: bookingData.endDate,
       title: bookingData.title,
       description: bookingData.description,
-      createdAt: new Date().toISOString(), // Add required field
-      isActive: true // Add required field
+      createdAt: new Date().toISOString(),
+      isActive: true,
     };
-    
+
     try {
-      await dispatch(createBooking(bookingToCreate) as any).unwrap();
+      await dispatch(createBooking(bookingToCreate)).unwrap();
       setOpenBookingDialog(false);
       setBookingData({
         startDate: '',
         endDate: '',
         title: '',
-        description: ''
+        description: '',
       });
       alert('Room booked successfully!');
     } catch (err) {
@@ -80,11 +82,11 @@ const RoomDetailPage: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setBookingData(prev => ({
+    setBookingData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
- };
+  };
 
   if (loading) {
     return <div>Loading room details...</div>;
@@ -112,16 +114,22 @@ const RoomDetailPage: React.FC = () => {
         <Typography variant="h4" gutterBottom>
           {selectedRoom.name}
         </Typography>
-        
+
         <Grid container spacing={2}>
           <Grid item xs={12} md={8}>
             <Typography variant="h6" gutterBottom>
               Details
             </Typography>
-            <Typography><strong>Location:</strong> {selectedRoom.location}</Typography>
-            <Typography><strong>Capacity:</strong> {selectedRoom.capacity} people</Typography>
-            <Typography><strong>Description:</strong> {selectedRoom.description}</Typography>
-            
+            <Typography>
+              <strong>Location:</strong> {selectedRoom.location}
+            </Typography>
+            <Typography>
+              <strong>Capacity:</strong> {selectedRoom.capacity} people
+            </Typography>
+            <Typography>
+              <strong>Description:</strong> {selectedRoom.description}
+            </Typography>
+
             <Typography variant="h6" style={{ marginTop: '1rem' }} gutterBottom>
               Amenities
             </Typography>
@@ -131,21 +139,25 @@ const RoomDetailPage: React.FC = () => {
               ))}
             </ul>
           </Grid>
-          
+
           <Grid item xs={12} md={4}>
             <Box display="flex" flexDirection="column" alignItems="center">
-              <Button 
-                variant="contained" 
-                color="primary" 
+              <Button
+                variant="contained"
+                color="primary"
                 size="large"
                 onClick={handleBookRoom}
                 disabled={!selectedRoom.isAvailable}
               >
                 {selectedRoom.isAvailable ? 'Book Room' : 'Not Available'}
               </Button>
-              
+
               {!selectedRoom.isAvailable && (
-                <Typography variant="body2" color="error" style={{ marginTop: '0.5rem' }}>
+                <Typography
+                  variant="body2"
+                  color="error"
+                  style={{ marginTop: '0.5rem' }}
+                >
                   This room is currently not available
                 </Typography>
               )}
@@ -153,9 +165,12 @@ const RoomDetailPage: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
-      
+
       {/* Booking Dialog */}
-      <Dialog open={openBookingDialog} onClose={() => setOpenBookingDialog(false)}>
+      <Dialog
+        open={openBookingDialog}
+        onClose={() => setOpenBookingDialog(false)}
+      >
         <DialogTitle>Book Room: {selectedRoom.name}</DialogTitle>
         <DialogContent>
           <form onSubmit={handleBookingSubmit}>
@@ -218,7 +233,11 @@ const RoomDetailPage: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenBookingDialog(false)}>Cancel</Button>
-          <Button onClick={handleBookingSubmit} variant="contained" color="primary">
+          <Button
+            onClick={handleBookingSubmit}
+            variant="contained"
+            color="primary"
+          >
             Book Room
           </Button>
         </DialogActions>

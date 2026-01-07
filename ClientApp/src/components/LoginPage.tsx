@@ -2,39 +2,35 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { login } from '../store/authSlice';
-import { RootState } from '../store';
-import { 
-  Container, 
-  Paper, 
-  Typography, 
-  TextField, 
-  Button, 
-  Box, 
+import { RootState, AppDispatch } from '../store';
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Box,
   Alert,
-  Link as MuiLink
+  Link as MuiLink,
 } from '@mui/material';
 
 const LoginPage: React.FC = () => {
   const [loginValue, setLoginValue] = useState('');
   const [password, setPassword] = useState('');
-  
-  const dispatch = useDispatch();
+
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const { loading, error } = useSelector((state: RootState) => state.auth);
-  
+
   const from = location.state?.from?.pathname || '/';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await dispatch(login({ login: loginValue, password }) as any).unwrap();
-      navigate(from, { replace: true });
-    } catch (err) {
-      console.error('Login failed:', err);
-    }
- };
+    await dispatch(login({ login: loginValue, password })).unwrap();
+    navigate(from, { replace: true });
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -42,13 +38,13 @@ const LoginPage: React.FC = () => {
         <Typography component="h1" variant="h5" align="center" gutterBottom>
           Sign In
         </Typography>
-        
+
         {error && (
           <Alert severity="error" style={{ marginBottom: '1rem' }}>
             {error}
           </Alert>
         )}
-        
+
         <form onSubmit={handleSubmit}>
           <TextField
             variant="outlined"
@@ -87,10 +83,10 @@ const LoginPage: React.FC = () => {
             {loading ? 'Signing In...' : 'Sign In'}
           </Button>
         </form>
-        
+
         <Box mt={2} textAlign="center">
           <Typography variant="body2">
-            Don't have an account?{' '}
+            Dont have an account?
             <MuiLink component={Link} to="/register">
               Sign up
             </MuiLink>

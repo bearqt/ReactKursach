@@ -1,14 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { 
-  Container, 
-  Paper, 
-  Typography, 
+import {
+  Container,
+  Paper,
+  Typography,
   Box,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
 } from '@mui/material';
 
 const ProfilePage: React.FC = () => {
@@ -20,7 +20,7 @@ const ProfilePage: React.FC = () => {
         <Typography variant="h4" gutterBottom>
           User Profile
         </Typography>
-        
+
         {user ? (
           <Box>
             <List>

@@ -38,7 +38,7 @@ namespace ReactAdvancedAppQwen.Data.Services
         
         public Task<IEnumerable<Booking>> GetAllBookingsAsync()
         {
-            return Task.FromResult((IEnumerable<Booking>)_bookings);
+            return Task.FromResult(_bookings.Where(x => x.IsActive));
         }
         
         public Task<IEnumerable<Booking>> GetUserBookingsAsync(int userId)

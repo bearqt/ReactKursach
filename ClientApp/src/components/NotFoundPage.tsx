@@ -12,7 +12,8 @@ const NotFoundPage: React.FC = () => {
         Page Not Found
       </Typography>
       <Typography variant="body1" style={{ marginBottom: '2rem' }}>
-        The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
+        The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
       </Typography>
       <Button variant="contained" color="primary" component={Link} to="/">
         Go Back Home

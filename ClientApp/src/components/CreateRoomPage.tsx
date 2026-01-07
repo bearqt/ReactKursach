@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { createRoom } from '../store/roomsSlice';
-import { 
- Container, 
-  Paper, 
-  Typography, 
-  TextField, 
-  Button, 
+import { AppDispatch } from '../store';
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
   Box,
   Alert,
   FormControl,
@@ -15,47 +16,47 @@ import {
   Select,
   MenuItem,
   Chip,
-  OutlinedInput
+  OutlinedInput,
+  SelectChangeEvent,
 } from '@mui/material';
 
 const CreateRoomPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     location: '',
     capacity: 1,
     description: '',
-    isAvailable: true, // Add default value
+    isAvailable: true,
     amenities: [] as string[],
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
-  // Available amenities options
- const amenitiesOptions = [
+
+  const amenitiesOptions = [
     'Projector',
     'Whiteboard',
     'Video Conference',
     'Air Conditioning',
     'Coffee Machine',
     'Sound System',
-    'Wi-Fi'
+    'Wi-Fi',
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
- };
+  };
 
-  const handleAmenitiesChange = (e: any) => {
+  const handleAmenitiesChange = (e: SelectChangeEvent<string[]>) => {
     const {
       target: { value },
     } = e;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       amenities: typeof value === 'string' ? value.split(',') : value,
     }));
@@ -65,15 +66,8 @@ const CreateRoomPage: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    
-    try {
-      await dispatch(createRoom(formData) as any).unwrap();
-      navigate('/rooms');
-    } catch (err: any) {
-      setError(err.message || 'Failed to create room');
-    } finally {
-      setLoading(false);
-    }
+    await dispatch(createRoom(formData)).unwrap();
+    navigate('/rooms');
   };
 
   return (
@@ -82,13 +76,13 @@ const CreateRoomPage: React.FC = () => {
         <Typography variant="h4" gutterBottom>
           Create New Meeting Room
         </Typography>
-        
+
         {error && (
           <Alert severity="error" style={{ marginBottom: '1rem' }}>
             {error}
           </Alert>
         )}
-        
+
         <form onSubmit={handleSubmit}>
           <TextField
             variant="outlined"
@@ -104,7 +98,7 @@ const CreateRoomPage: React.FC = () => {
             onChange={handleInputChange}
             style={{ marginBottom: '1rem' }}
           />
-          
+
           <TextField
             variant="outlined"
             margin="normal"
@@ -117,7 +111,7 @@ const CreateRoomPage: React.FC = () => {
             onChange={handleInputChange}
             style={{ marginBottom: '1rem' }}
           />
-          
+
           <TextField
             variant="outlined"
             margin="normal"
@@ -131,7 +125,7 @@ const CreateRoomPage: React.FC = () => {
             onChange={handleInputChange}
             style={{ marginBottom: '1rem' }}
           />
-          
+
           <TextField
             variant="outlined"
             margin="normal"
@@ -145,7 +139,7 @@ const CreateRoomPage: React.FC = () => {
             onChange={handleInputChange}
             style={{ marginBottom: '1rem' }}
           />
-          
+
           <FormControl fullWidth style={{ marginBottom: '1rem' }}>
             <InputLabel id="amenities-label">Amenities</InputLabel>
             <Select
@@ -171,11 +165,11 @@ const CreateRoomPage: React.FC = () => {
               ))}
             </Select>
           </FormControl>
-          
+
           <Box mt={2} display="flex" justifyContent="space-between">
-            <Button 
-              variant="outlined" 
-              color="secondary" 
+            <Button
+              variant="outlined"
+              color="secondary"
               onClick={() => navigate('/rooms')}
             >
               Cancel
@@ -192,7 +186,7 @@ const CreateRoomPage: React.FC = () => {
         </form>
       </Paper>
     </Container>
- );
+  );
 };
 
 export default CreateRoomPage;

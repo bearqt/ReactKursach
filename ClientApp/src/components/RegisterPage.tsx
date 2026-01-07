@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { register } from '../store/authSlice';
-import { RootState } from '../store';
-import { 
-  Container, 
-  Paper, 
-  Typography, 
-  TextField, 
-  Button, 
- Box, 
+import { RootState, AppDispatch } from '../store';
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Box,
   Alert,
-  Link as MuiLink
+  Link as MuiLink,
 } from '@mui/material';
 
 const RegisterPage: React.FC = () => {
@@ -19,41 +19,37 @@ const RegisterPage: React.FC = () => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  
-  const dispatch = useDispatch();
+
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
       alert('Passwords do not match');
       return;
     }
-    
-    try {
-      await dispatch(register({ login, password, name }) as any).unwrap();
-      navigate('/login');
-    } catch (err) {
-      console.error('Registration failed:', err);
-    }
+
+    await dispatch(register({ login, password, name })).unwrap();
+    navigate('/login');
   };
 
- return (
+  return (
     <Container component="main" maxWidth="xs">
       <Paper elevation={3} style={{ padding: '2rem', marginTop: '4rem' }}>
         <Typography component="h1" variant="h5" align="center" gutterBottom>
           Sign Up
         </Typography>
-        
+
         {error && (
           <Alert severity="error" style={{ marginBottom: '1rem' }}>
             {error}
           </Alert>
         )}
-        
+
         <form onSubmit={handleSubmit}>
           <TextField
             variant="outlined"
@@ -117,7 +113,7 @@ const RegisterPage: React.FC = () => {
             {loading ? 'Creating Account...' : 'Sign Up'}
           </Button>
         </form>
-        
+
         <Box mt={2} textAlign="center">
           <Typography variant="body2">
             Already have an account?{' '}
